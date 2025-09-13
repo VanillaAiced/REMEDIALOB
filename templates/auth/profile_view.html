@@ -6,16 +6,14 @@
 
 {% block content %}
 <div class="container py-4">
-    <!-- Profile Card -->
     <div class="row justify-content-center mb-4">
         <div class="col-lg-8">
             <div class="card shadow-sm">
                 <div class="card-body">
                     <div class="row">
-                        <!-- Profile Picture -->
                         <div class="col-md-4 text-center mb-3 mb-md-0">
                             {% if profile.profile_picture %}
-                                <img src="{{ profile.profile_picture.url }}" alt="Profile Picture" 
+                                <img src="{{ profile.profile_picture.url }}" alt="Profile Picture"
                                      class="rounded-circle img-fluid mb-3" style="width: 150px; height: 150px; object-fit: cover;">
                             {% else %}
                                 <div class="rounded-circle bg-secondary bg-opacity-10 d-flex align-items-center justify-content-center mx-auto mb-3"
@@ -24,7 +22,6 @@
                                 </div>
                             {% endif %}
                         </div>
-                        <!-- Profile Info -->
                         <div class="col-md-8">
                             <h2 class="mb-2">{{ profile.first_name }} {{ profile.last_name }}</h2>
                             <p class="text-muted mb-2">
@@ -36,6 +33,39 @@
                             {% endif %}
                         </div>
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <button class="btn btn-primary" data-bs-toggle="collapse" data-bs-target="#editProfileForm">
+                Edit Profile
+            </button>
+
+            <div class="collapse mt-4" id="editProfileForm">
+                <div class="card card-body">
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="id_first_name" class="form-label">First Name</label>
+                            <input type="text" class="form-control" id="id_first_name" name="first_name" value="{{ profile.first_name|default:'' }}">
+                        </div>
+                        <div class="mb-3">
+                            <label for="id_last_name" class="form-label">Last Name</label>
+                            <input type="text" class="form-control" id="id_last_name" name="last_name" value="{{ profile.last_name|default:'' }}">
+                        </div>
+                        <div class="mb-3">
+                            <label for="id_bio" class="form-label">Bio</label>
+                            <textarea class="form-control" id="id_bio" name="bio" rows="3">{{ profile.bio|default:'' }}</textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="id_profile_picture" class="form-label">Profile Picture</label>
+                            <input type="file" class="form-control" id="id_profile_picture" name="profile_picture">
+                        </div>
+                        <button type="submit" class="btn btn-success">Save Changes</button>
+                    </form>
                 </div>
             </div>
         </div>

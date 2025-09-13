@@ -3,13 +3,17 @@ from django.contrib.auth.base_user import BaseUserManager
 from django.contrib.auth.models import AbstractUser
 import os
 import random
+
 def get_filename_ext(filepath):
     base_name = os.path.basename(filepath)
     name, ext = os.path.splitext(base_name)
     return name, ext
 
 def upload_image_path(instance, filename):
-    pass
+    new_filename = f"{uuid.uuid4()}"
+    name, ext = get_filename_ext(filename)
+    final_filename = f"{new_filename}{ext}"
+    return f"profile_pictures/{instance.user.id}/{final_filename}"
 
 class UserManager(BaseUserManager):
     def create_user(self, email, username, password=None, is_active=True, is_staff=False, is_admin=False):

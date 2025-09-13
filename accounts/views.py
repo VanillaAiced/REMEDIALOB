@@ -84,12 +84,51 @@ def signin_view(request):
             if not Profile.objects.filter(user=user).exists():
                 print('User does not have a profile.')
             print('User has a profile.')
+            return render( request, 'jobs/job_list.html')
         else:
             messages.error(request, 'Invalid email or password')
     return render(request, 'auth/signin.html')
 
 def profile_create_view(request):
-    pass
+    if not request.user.is_authenticated:
+        messages.error(request, 'Please sign in first.')
+        return redirect('auth:signin')
+
+    profile, created = Profile.objects.get_or_create(user=request.user)
+
+    if request.method == 'POST':
+        first_name = request.POST.get('first_name')
+        last_name = request.POST.get('last_name')
+        bio = request.POST.get('bio')
+
+        profile_picture = request.FILES.get('profile_picture')
+
+        profile.first_name = first_name
+        profile.last_name = last_name
+        profile.bio = bio
+        if profile_picture:
+            profile.profile_picture = profile_picture
+
+        try:
+            profile.save()
+            messages.success(request, 'Profile updated successfully!')
+            return redirect('auth:profile_view')
+        except Exception as e:
+            messages.error(request, f'An error occurred: {e}')
+
+    context = {
+        'profile': profile,
+        'user': request.user,
+    }
+
+    if request.user.is_admin and request.user.is_staff:
+        job_posted = Job.objects.filter(user=request.user)
+        context['job_posted'] = job_posted
+    else:
+        applied_jobs = JobApplicant.objects.filter(user=request.user)
+        context['applied_jobs'] = applied_jobs
+
+    return render(request, 'auth/profile_view.html', context)
 def profile_view(request):
     if not request.user.is_authenticated:
         messages.error(request, 'Please sign in first.')

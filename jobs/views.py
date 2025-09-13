@@ -1,3 +1,4 @@
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Q
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
@@ -9,8 +10,12 @@ from .models import Job, JobApplicant
 
 # Create your views here.
 
-class JobCreateView(CreateView):
-    pass
+class JobCreateView(LoginRequiredMixin, CreateView):
+    model = Job
+    form_class = JobForm
+    template_name = 'jobs/job_create.html'
+    success_url = reverse_lazy('jobs:job_list_view')
+    login_url = reverse_lazy('accounts:signin')
 def job_list_view(request):
     jobs = Job.objects.all()
     query = request.GET.get('q', None)
@@ -23,7 +28,7 @@ def job_list_view(request):
     context = {
         'jobs': jobs,
     }
-    return render(request, 'jobs/job_list.html')
+    return render(request, 'jobs/job_list.html', context)
 
 def job_detail_view(request, pk):
     try:

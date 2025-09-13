@@ -86,3 +86,12 @@
     }
 </style>
 {% endblock %}
+
+{% for post in object_list %}
+    <div>
+        <h2>
+            <a href="{% url 'posts:post-detail' slug=post.slug %}">{{ post.title }}</a>
+        </h2>
+        <p>{{ post.content|truncatewords:30 }}</p>
+    </div>
+{% endfor %}
