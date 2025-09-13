@@ -17,7 +17,9 @@
                 <!-- Posts Feed -->
                 {% for post in object_list %}
                     <div class="card mb-4 shadow-sm position-relative">
-                        <a href="{% url 'posts:post-detail' post.slug %}" class="text-decoration-none text-dark">
+                        {% for post in posts %}
+                            <a href="{% url 'post-detail' post.slug %}">{{ post.title }}</a>
+                        {% endfor %}
                             <!-- Post Header -->
                             <div class="card-header bg-white border-0 pt-3">
                                 <div class="d-flex align-items-center">
@@ -53,7 +55,13 @@
                             <!-- Post Actions -->
                             <div class="card-footer bg-white border-top-0">
                                 <div class="d-flex align-items-center text-muted">
-                                    <i class="bi bi-chat me-2"></i> View details
+                                     {% if post.slug %}
+                                        <a href="{% url 'posts:post-detail' post.slug %}" class="text-decoration-none text-muted">
+                                            <i class="bi bi-chat me-2"></i> View Post
+                                        </a>
+                                    {% else %}
+                                        <span class="text-muted"><i class="bi bi-exclamation-circle"></i> No detail view</span>
+                                    {% endif %}
                                 </div>
                             </div>
                         </a>
@@ -86,12 +94,3 @@
     }
 </style>
 {% endblock %}
-
-{% for post in object_list %}
-    <div>
-        <h2>
-            <a href="{% url 'posts:post-detail' slug=post.slug %}">{{ post.title }}</a>
-        </h2>
-        <p>{{ post.content|truncatewords:30 }}</p>
-    </div>
-{% endfor %}
